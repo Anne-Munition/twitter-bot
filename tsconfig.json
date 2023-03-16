@@ -1,0 +1,18 @@
+/* https://www.staging-typescript.org/tsconfig */
+
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "removeComments": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "lib": ["ES6", "DOM"]
+  },
+  "include": ["./src/**/*"]
+}
