@@ -9,7 +9,7 @@ app
     logger.info('Startup complete');
   })
   .catch((err) => {
-    console.error(err);
+    console.error(err); // TODO
   });
 
 const signals: NodeJS.Signals[] = ['SIGHUP', 'SIGINT', 'SIGTERM'];
@@ -37,6 +37,7 @@ process.on('unhandledRejection', (err: Error) => {
 });
 
 function logException(type: string, err: Error) {
+  // TODO
   if (err) {
     logger.error(err);
     if (err.stack) {

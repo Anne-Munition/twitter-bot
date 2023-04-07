@@ -13,8 +13,8 @@ export async function init(): Promise<void> {
   const url = 'https://api.streamelements.com/kappa/v2/channels/me';
   const options = { headers: headers() };
   const { _id, displayName } = await axios.get(url, options).then(({ data }) => data);
-  logger.info(`Streamelements connected to channel: ${displayName}`);
   channelId = _id;
+  logger.info(`Streamelements ready. Channel: ${displayName}`);
 }
 
 async function say(message: string): Promise<AxiosResponse<any>> {

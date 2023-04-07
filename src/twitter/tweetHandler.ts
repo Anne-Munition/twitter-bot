@@ -1,42 +1,24 @@
 import logger from '../logger';
 import { TweetV2 } from 'twitter-api-v2';
-import { decode } from 'html-entities';
-import { announce } from '../streamelements';
+import * as discord from '../discord';
+import { getUsername, getId } from './index';
+import * as twitch from '../twitch';
 
 const oldTweetIds: string[] = [];
-const name = process.env.TWITTER_USER;
-export const goingLiveUrl = new RegExp(`https?:\/\/twitch.tv\/${name}`, 'i');
+if (!process.env.TWITCH_USERNAME) throw new Error('Missing TWITCH_USERNAME');
 
-export default async function tweetHandler(data: TweetV2) {
-  logger.info(`Processing Tweet: ${data.id}`);
-  logger.debug(JSON.stringify(data, null, 2));
+export default async function tweetHandler(tweet: TweetV2) {
+  const username = getUsername();
+  const id = getId();
+  const link = `https://twitter.com/${username}/status/${tweet.id}`;
+  logger.info(`Processing Tweet: ${link}`);
+  logger.debug(JSON.stringify(tweet, null, 2));
 
-  if (data.in_reply_to_user_id) return;
-  if (oldTweetIds.includes(data.id)) return;
-  oldTweetIds.push(data.id);
+  if (tweet.in_reply_to_user_id && tweet.in_reply_to_user_id !== id) return;
+  if (oldTweetIds.includes(tweet.id)) return;
+  oldTweetIds.push(tweet.id);
   if (oldTweetIds.length >= 10) oldTweetIds.shift();
 
-  const urls = data.entities?.urls?.map((x) => x.url) || [];
-  const expandedUrls = data.entities?.urls?.map((x) => x.expanded_url) || [];
-
-  const isGoingLiveTweet = expandedUrls.find((x) => goingLiveUrl.test(x));
-  const [stream] = await twitchApi.getStreams([name]);
-  if (!stream && !isGoingLiveTweet) return;
-
-  let text = decode(data.text);
-  urls.forEach((x) => {
-    text = text.replace(x, '');
-  });
-  text = text.replace(/\n+/g, ' ');
-  text = text.replace(/\s+/g, ' ');
-  text = text.replace(/^"|"$/g, '');
-  text = text.trim();
-
-  const link = `https://twitter.com/${name}/status/${data.id}`;
-
-  const message = text
-    ? `New tweet from ${name}: "${text}" ${link}`
-    : `New tweet from ${name}: ${link}`;
-
-  await announce(message);
+  discord.sendMessage(tweet.id, link).catch(() => {});
+  twitch.sendMessage(tweet, link).catch(() => {});
 }

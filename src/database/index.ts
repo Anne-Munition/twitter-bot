@@ -15,7 +15,7 @@ export async function disconnect(): Promise<void> {
   logger.info('Database connection closed');
 }
 
-export function getConnectionString(): string {
+function getConnectionString(): string {
   if (!process.env.MONGO_URL) throw new Error('Missing MONGO_URL');
   return process.env.MONGO_URL;
 }
