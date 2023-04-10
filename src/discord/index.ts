@@ -13,7 +13,7 @@ const client = axios.create({
 
 const channels = ['362349719663542272', '92313043303665664'];
 
-export async function sendMessage(tweetId: string, text: string) {
+export function sendMessage(tweetId: string, text: string) {
   const requests = channels.map((channel) => {
     return client
       .post(`/channels/${channel}/messages`, { content: text })

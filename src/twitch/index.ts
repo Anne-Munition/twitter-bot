@@ -5,6 +5,8 @@ import { announce } from '../streamelements';
 import { TweetV2 } from 'twitter-api-v2';
 import { getUsername } from '../twitter';
 
+if (!process.env.TWITCH_USERNAME) throw new Error('Missing TWITCH_USERNAME');
+
 export async function init() {
   await initToken();
 }
