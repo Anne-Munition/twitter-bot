@@ -34,20 +34,22 @@ export async function sendMessage(tweet: TweetV2, link: string) {
   announce(message).catch(() => {});
 }
 
-async function isLive(tries = 1): Promise<boolean> {
-  return new Promise(async (resolve) => {
-    const [stream] = await endpoints.getStreams([process.env.TWITCH_USERNAME as string]);
-    if (stream) {
-      resolve(true);
-      return;
-    } else {
-      if (tries >= 5) {
-        resolve(false);
+function isLive(): Promise<boolean> {
+  return new Promise((resolve) => {
+    (async function check(tries = 1) {
+      const [stream] = await endpoints.getStreams([process.env.TWITCH_USERNAME as string]);
+      if (stream) {
+        resolve(true);
         return;
+      } else {
+        if (tries >= 5) {
+          resolve(false);
+          return;
+        }
+        setTimeout(() => {
+          check(tries++);
+        }, 1000 * 60);
       }
-      setTimeout(() => {
-        isLive(tries++);
-      }, 1000 * 60);
-    }
+    })(1);
   });
 }
