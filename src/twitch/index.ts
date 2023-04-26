@@ -36,16 +36,16 @@ export async function sendMessage(tweet: TweetV2, link: string) {
 
 function isLive(): Promise<boolean> {
   return new Promise((resolve) => {
-    (async function check(tries = 1) {
+    (async function check(tries: number) {
+      if (tries > 5) {
+        resolve(false);
+        return;
+      }
       const [stream] = await endpoints.getStreams([process.env.TWITCH_USERNAME as string]);
       if (stream) {
         resolve(true);
         return;
       } else {
-        if (tries >= 5) {
-          resolve(false);
-          return;
-        }
         setTimeout(() => {
           check(tries++);
         }, 1000 * 60);
