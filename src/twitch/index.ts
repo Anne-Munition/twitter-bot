@@ -35,6 +35,17 @@ export async function sendMessage(tweet: TweetV2, link: string) {
 }
 
 function isLive(): Promise<boolean> {
+  return new Promise(async (resolve) => {
+    const [stream] = await endpoints.getStreams([process.env.TWITCH_USERNAME as string]);
+    if (stream) {
+      resolve(true);
+    } else {
+      resolve(false);
+    }
+  });
+}
+
+/*function isLive(): Promise<boolean> {
   return new Promise((resolve) => {
     (async function check(tries: number) {
       if (tries > 5) {
@@ -52,4 +63,4 @@ function isLive(): Promise<boolean> {
       }
     })(1);
   });
-}
+}*/
