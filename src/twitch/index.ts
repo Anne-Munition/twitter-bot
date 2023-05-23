@@ -34,33 +34,29 @@ export async function sendMessage(tweet: TweetV2, link: string) {
   announce(message).catch(() => {});
 }
 
-function isLive(): Promise<boolean> {
-  return new Promise(async (resolve) => {
-    const [stream] = await endpoints.getStreams([process.env.TWITCH_USERNAME as string]);
-    if (stream) {
-      resolve(true);
-    } else {
-      resolve(false);
-    }
-  });
-}
-
-/*function isLive(): Promise<boolean> {
+export function isLive(): Promise<boolean> {
   return new Promise((resolve) => {
     (async function check(tries: number) {
-      if (tries > 5) {
-        resolve(false);
-        return;
-      }
       const [stream] = await endpoints.getStreams([process.env.TWITCH_USERNAME as string]);
       if (stream) {
         resolve(true);
         return;
       } else {
-        setTimeout(() => {
-          check(tries++);
-        }, 1000 * 60);
+        if (tries >= 5) {
+          resolve(false);
+          return;
+        }
+        await timeout();
+        check((tries += 1));
       }
     })(1);
   });
-}*/
+}
+
+export function timeout(): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 1000 * 60);
+  });
+}
