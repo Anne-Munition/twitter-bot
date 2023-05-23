@@ -1,0 +1,16 @@
+export const stream: HelixStream = {
+  id: '1234',
+  user_id: '1234',
+  user_login: 'dbkynd',
+  user_name: 'DBKynd',
+  game_id: '1234',
+  game_name: 'Minecraft',
+  type: '',
+  title: 'Some Title',
+  viewer_count: 100,
+  started_at: '2023-05-22T15:22:15Z',
+  language: 'en',
+  thumbnail_url: '',
+  tag_ids: [],
+  is_mature: true,
+};
